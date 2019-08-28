@@ -4,7 +4,7 @@
 *
 * TODO:
 * fix camera bugs
-* add ship models
+* add ship models (OK) -> beautify the model
 * add kb & mouse controls
 */
 
@@ -13,6 +13,7 @@ var renderer, camera, scene, light;
 var width, height;
 var hemisphereLight, shadowLight, ambientLight;
 var sea;
+var progEnable = true;
 
 var Colors = {
     red: 0xf25346,           // #f25346
@@ -29,18 +30,19 @@ window.addEventListener('resize', onWindowResize, false);
 
 
 function init() {
+    progbar.css("width", "20%");
     initScene();
     initLights();
     initSea();
-
+    initBoat();
     loop();
 }
 
 function onWindowResize() {
     width = window.innerWidth
     height = window.innerHeight;
-    camera.left = width / - 2.5;
-    camera.right = width / 4;
+    camera.left = width / - 2;
+    camera.right = width / 2;
     camera.top = height / 2;
     camera.bottom = height / - 2;
     camera.updateProjectionMatrix();
@@ -57,8 +59,8 @@ function initScene() {
 
     // Camera
     camera = new THREE.OrthographicCamera(
-        width / -2.5,
-        width / 4,
+        width / -2,
+        width / 2,
         height / 2,
         height / -2,
         1,
@@ -67,6 +69,7 @@ function initScene() {
 
     camera.position.set(100, -200, 200);
     camera.rotation.set(Math.PI / 4, 0, Math.PI / 8);
+
     // camera.lookAt(0, 0, 0);
 
     // Renderer
@@ -160,6 +163,30 @@ function initSea() {
     sea = new Sea();
     sea.mesh.position.set(0, 0, 0);
     scene.add(sea.mesh);
+}
+
+// Boat
+var boat;
+function initBoat() {
+    let loader = new THREE.GLTFLoader();
+    loader.load('./src/boat.gltf', function (gltf) {
+        boat = gltf.scene;
+        boat.rotation.set(0, Math.PI, 0);
+        scene.add(gltf.scene);
+    }, undefined, function(error){
+        console.log('.gltf error:' + error);
+        });
+    console.log(boat);
+    // boat.rotation.set(0, Math.PI / 4, 0);
+}
+
+function loadGLTF(path) {
+    let loader = new THREE.GLTFLoader();
+    loader.load(path, function (gltf){
+        scene.add(gltf.scene);
+    }, undefined, function(error){
+        console.log('.gltf error:' + error);
+    });
 }
 
 // Animation Loop
