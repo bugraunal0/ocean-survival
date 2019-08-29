@@ -35,7 +35,28 @@ function init() {
     initLights();
     initSea();
     initBoat();
+    initAxis();
     loop();
+}
+
+function initAxis() {
+    let geomX = new THREE.Geometry();
+    let geomY = new THREE.Geometry();
+    let geomZ = new THREE.Geometry();
+    let matR = new THREE.LineBasicMaterial({color: 0xff0000});
+    let matG = new THREE.MeshBasicMaterial({color: 0x00ff00});
+    let matB = new THREE.MeshBasicMaterial({color: 0x0000ff});
+
+    geomX.vertices.push(new THREE.Vector3(0, 0, 0));
+    geomX.vertices.push(new THREE.Vector3(700, 0, 0));
+    geomY.vertices.push(new THREE.Vector3(0, 0, 0));
+    geomY.vertices.push(new THREE.Vector3(0, 700, 0));
+    geomZ.vertices.push(new THREE.Vector3(0, 0, 0));
+    geomZ.vertices.push(new THREE.Vector3(0, 0, 700));
+
+    scene.add(new THREE.Line(geomX, matR));
+    scene.add(new THREE.Line(geomY, matG));
+    scene.add(new THREE.Line(geomZ, matB));
 }
 
 function onWindowResize() {
@@ -67,10 +88,8 @@ function initScene() {
         1000
     );
 
-    camera.position.set(100, -200, 200);
-    camera.rotation.set(Math.PI / 4, 0, Math.PI / 8);
-
-    // camera.lookAt(0, 0, 0);
+    camera.position.set(0, -500, 200);
+    camera.rotation.set(1.5, 0, 0);
 
     // Renderer
     renderer = new THREE.WebGLRenderer({
@@ -121,7 +140,7 @@ function initLights() {
 // Sea
 class Sea {
     constructor() {
-        let geom = new THREE.PlaneGeometry(600, 600, 7, 7);
+        let geom = new THREE.PlaneGeometry(1000, 1000, 7, 7);
         // IMP: combine the vertices
         geom.mergeVertices();
 
@@ -176,62 +195,19 @@ function initBoat() {
     }, undefined, function(error){
         console.log('.gltf error:' + error);
         });
-    console.log(boat);
     // boat.rotation.set(0, Math.PI / 4, 0);
-}
-
-function loadGLTF(path) {
-    let loader = new THREE.GLTFLoader();
-    loader.load(path, function (gltf){
-        scene.add(gltf.scene);
-    }, undefined, function(error){
-        console.log('.gltf error:' + error);
-    });
 }
 
 // Animation Loop
 function loop() {
     sea.moveWaves();
     renderer.render(scene, camera);
+    // syncCamera();
     requestAnimationFrame(loop);
 }
 
-// Legacy
-// function initObject() {
-//     // 地面网格
-//     let lineGeometry = new THREE.Geometry();
-//     let lineMaterial = new THREE.LineBasicMaterial({ color: 0xaaaaaa });
-
-//     lineGeometry.vertices.push(new THREE.Vector3(-500, 0, 0));
-//     lineGeometry.vertices.push(new THREE.Vector3(500, 0, 0));
-
-//     for (let i = 0; i <= 20; i++) {
-//         let line = new THREE.Line(lineGeometry, lineMaterial);
-//         line.position.z = i * 50 - 500;
-//         scene.add(line);
-
-//         line = new THREE.Line(lineGeometry, lineMaterial);
-//         line.position.x = i * 50 - 500;
-//         line.rotation.y = Math.PI / 2;
-//         scene.add(line);
-//     }
-
-//     // 立方体
-//     let cubeGeometry = new THREE.CubeGeometry(100, 100, 100, 4, 4);
-//     let cubeMaterial = new THREE.MeshLambertMaterial(0x00ffff);
-//     // let cubeMat = new THREE.MeshBasicMaterial(0x000000);
-//     cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-//     cube.position.set(0, 50, 0);
-//     // cube.rotation.set(0.5, 0.5, 0.5);
-//     cube.castShadow = true;
-//     scene.add(cube);
-
-//     // 平面
-//     let planeGeometry = new THREE.PlaneGeometry(1000, 1000);
-//     let planeMaterial = new THREE.MeshStandardMaterial(0xffffff);
-//     let plane = new THREE.Mesh(planeGeometry, planeMaterial);
-//     plane.lookAt(0, 1, 0);
-//     // 接受阴影
-//     plane.receiveShadow = true;
-//     scene.add(plane);
-// }
+function syncCamera() {
+    camera.position.set($('#posX').val(), $('#posY').val(), $('#posZ').val());
+    camera.rotation.set($('#rotX').val()/100, $('#rotY').val()/100, $('#rotZ').val()/100);
+    camera.updateProjectionMatrix();
+}
