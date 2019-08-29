@@ -3,68 +3,22 @@
     <head>
         <meta charset="UTF-8" />
         <title>Ocean Survival</title>
-        <style type="text/css">
-            body {
-                margin: 0;
-                padding: 0;
-            }
-            #main-scene {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                overflow: hidden;
-                background: linear-gradient(#e4e0ba, #f7d9aa);
-            }
-            #main-scene canvas {
-                visibility: hidden;
-                opacity: 0;
-                transition: all 1s ease-in-out;
-            }
-            .progress {
-                position: absolute;
-                width: 50%;
-                height: 40px;
-                overflow: hidden;
-                background: rgb(92, 92, 92);
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                border-radius: 10px;
-                box-shadow: 7px 7px 50px #777777;
-                transition: all 1s ease-in-out;
-            }
-            .progress-bar {
-                position: absolute;
-                width: 0%;
-                height: 100%;
-                z-index: -1;
-                background: rgb(17, 164, 190);
-                transition: width 2s ease-in-out;
-            }
-            .progress p {
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                line-height: 40px;
-                text-align: center;
-                color: white;
-            }
-            
-        </style>
+        <link href='./css/main.css' type="text/css" rel='stylesheet' />
     </head>
 
     <body>
-        <div class="camerarig">
-            <form>
-                <input id="posX" type="range" min="-500" max="500">
-                <input id="posY" type="range" min="-500" max="500">
-                <input id="posZ" type="range" min="-500" max="500">
-                <input id="rotX" type="range" min="0" max="628">
-                <input id="rotY" type="range" min="0" max="628">
-                <input id="rotZ" type="range" min="0" max="628">
-            </form>
+        <div id="main-scene">
+            <div class="camera-rig">
+                <form>
+                    <input id="posX" type="range" value="0" min="-700" max="700">
+                    <input id="posY" type="range" value="-500" min="-700" max="700">
+                    <input id="posZ" type="range" value="200" min="-700" max="700">
+                    <input id="rotX" type="range" value="150" min="0" max="628">
+                    <input id="rotY" type="range" value="0" min="0" max="628">
+                    <input id="rotZ" type="range" value="0" min="0" max="628">
+                </form>
+            </div>
         </div>
-        <div id="main-scene"></div>
         <div class="progress">
             <div class="progress-bar"></div>
             <p class="progress-text">正在思考</p>
@@ -74,9 +28,15 @@
         <!-- <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script> -->
         <script src="./js/three.js"></script>
         <!-- <script src="https://cdn.bootcss.com/three.js/r83/three.min.js"></script> -->
+        
+        <!-- GLTF Loader -->
         <script src="./js/GLTFLoader.js"></script>
 
-        <!-- local js -->
+        <!-- FBX Loader -->
+        <script src="./js/inflate.min.js"></script>
+        <script src="./js/FBXLoader.js"></script>
+
+        <!-- Local js -->
         <script src="./js/main.js"></script>
         <script src="./js/game.js"></script>
     </body>

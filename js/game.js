@@ -1,11 +1,14 @@
 /*
 * game.js
-* author: Censyu
+* @author: Censyu
 *
 * TODO:
 * fix camera bugs
 * add ship models (OK) -> beautify the model
 * add kb & mouse controls
+*
+* FIXME:
+* broken .gltf model
 */
 
 // global vars
@@ -13,7 +16,7 @@ var renderer, camera, scene, light;
 var width, height;
 var hemisphereLight, shadowLight, ambientLight;
 var sea;
-var progEnable = true;
+var progEnable = false;
 
 var Colors = {
     red: 0xf25346,           // #f25346
@@ -30,12 +33,21 @@ window.addEventListener('resize', onWindowResize, false);
 
 
 function init() {
-    progbar.css("width", "20%");
+    if (progEnable) {
+        progbar.css("width", "20%");
+    }
     initScene();
     initLights();
     initSea();
     initBoat();
+    // loadFBX();
     initAxis();
+    if (!progEnable) {
+        $(".progress").css("visibility", "hidden");
+        $(".progress").css("opacity", "0");
+        $("#main-scene canvas").css("visibility", "visible");
+        $("#main-scene canvas").css("opacity", "1");
+    }
     loop();
 }
 
@@ -185,24 +197,19 @@ function initSea() {
 }
 
 // Boat
-var boat;
+// var boat;
 function initBoat() {
-    let loader = new THREE.GLTFLoader();
-    loader.load('./src/boat.gltf', function (gltf) {
-        boat = gltf.scene;
-        boat.rotation.set(0, Math.PI, 0);
-        scene.add(gltf.scene);
-    }, undefined, function(error){
-        console.log('.gltf error:' + error);
-        });
-    // boat.rotation.set(0, Math.PI / 4, 0);
+    // loadGLTF('./src/boat.gltf';
+    loadFBX('./src/boat.fbx');
+    // boat.rotation.set(-Math.PI / 2, 0, 0);
+
 }
 
 // Animation Loop
 function loop() {
     sea.moveWaves();
     renderer.render(scene, camera);
-    // syncCamera();
+    syncCamera();
     requestAnimationFrame(loop);
 }
 
@@ -210,4 +217,39 @@ function syncCamera() {
     camera.position.set($('#posX').val(), $('#posY').val(), $('#posZ').val());
     camera.rotation.set($('#rotX').val()/100, $('#rotY').val()/100, $('#rotZ').val()/100);
     camera.updateProjectionMatrix();
+}
+
+function loadFBX(path) {
+    let loader = new THREE.FBXLoader();
+    loader.load(path, function (fbx) {
+        // >for animation...
+        // object.mixer = new THREE.AnimationMixer(object);
+        // mixers.push(object.mixer);
+
+        // var action = object.mixer.clipAction(object.animations[0]);
+        // action.play();
+
+        // object.traverse( function (child) {
+        //     if (child.isMesh) {
+        //         child.castShadow = true;
+        //         child.receiveShadow = true;
+        //     }
+        // });
+
+        // Customized setting
+        fbx.rotation.set(-Math.PI / 2, 0, 0);
+        scene.add(fbx);
+    } );
+}
+
+function loadGLTF(path) {
+    let loader = new THREE.GLTFLoader();
+    loader.load(path, function (gltf) {
+        // Customized setting
+        gltf.scene.rotation.set(0, Math.PI, 0);
+        scene.add(gltf.scene);
+    }, undefined, function(error){
+        console.log('.gltf error:' + error);
+        });
+    
 }

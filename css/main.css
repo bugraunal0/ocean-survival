@@ -1,0 +1,53 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+#main-scene {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(#e4e0ba, #f7d9aa);
+}
+#main-scene canvas {
+    visibility: hidden;
+    opacity: 0;
+    transition: all 1s ease-in-out;
+}
+.progress {
+    position: absolute;
+    width: 50%;
+    height: 40px;
+    overflow: hidden;
+    background: rgb(92, 92, 92);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    box-shadow: 7px 7px 50px #777777;
+    transition: all 1s ease-in-out;
+}
+.progress-bar {
+    position: absolute;
+    width: 0%;
+    height: 100%;
+    z-index: -1;
+    background: rgb(17, 164, 190);
+    transition: width 2s ease-in-out;
+}
+.progress p {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    line-height: 40px;
+    text-align: center;
+    color: white;
+}
+
+/* Camera Rig */
+.camera-rig {
+    position: absolute;
+}
+.camera-rig input {
+    margin: 0px 30px;
+}

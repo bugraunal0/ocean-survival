@@ -23,13 +23,13 @@ proglist.push({
 
 
 progbar.on('transitionend', function () {
-    if (!progEnable) {
-        $(".progress").css("visibility", "hidden");
-        $(".progress").css("opacity", "0");
-        $("#main-scene canvas").css("visibility", "visible");
-        $("#main-scene canvas").css("opacity", "1");
-        return;
-    }
+    // if (!progEnable) {
+    //     $(".progress").css("visibility", "hidden");
+    //     $(".progress").css("opacity", "0");
+    //     $("#main-scene canvas").css("visibility", "visible");
+    //     $("#main-scene canvas").css("opacity", "1");
+    //     return;
+    // }
     if (progindex < proglist.length) {
         progbar.css("width", proglist[progindex].prog + "%");
         progtext.text(proglist[progindex].info);
