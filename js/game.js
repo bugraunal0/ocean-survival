@@ -9,6 +9,11 @@
 *
 * FIXME:
 * broken .gltf model
+*
+* HINT:
+* mind out the async scheme of FBXLoader
+*     (the model will be loaded later), not instantly!
+* promise is not useful when the callback function has its own callback function!
 */
 
 // global vars
@@ -31,7 +36,6 @@ var Colors = {
 window.addEventListener('load', init, false);
 window.addEventListener('resize', onWindowResize, false);
 
-
 function init() {
     if (progEnable) {
         progbar.css("width", "20%");
@@ -40,7 +44,6 @@ function init() {
     initLights();
     initSea();
     initBoat();
-    // loadFBX();
     initAxis();
     if (!progEnable) {
         $(".progress").css("visibility", "hidden");
@@ -48,7 +51,16 @@ function init() {
         $("#main-scene canvas").css("visibility", "visible");
         $("#main-scene canvas").css("opacity", "1");
     }
+
     loop();
+}
+
+// Animation Loop
+function loop() {
+    sea.moveWaves();
+    renderer.render(scene, camera);
+    syncCamera();
+    requestAnimationFrame(loop);
 }
 
 function initAxis() {
@@ -197,29 +209,45 @@ function initSea() {
 }
 
 // Boat
-// var boat;
+var boat;
 function initBoat() {
-    // loadGLTF('./src/boat.gltf';
-    loadFBX('./src/boat.fbx');
-    // boat.rotation.set(-Math.PI / 2, 0, 0);
-
+    // loadGLTF('./src/boat.gltf', 'boat');
+    // FIXME: async starts here!
+    loadFBX('./src/boat.fbx', 'boat');    
 }
 
-// Animation Loop
-function loop() {
-    sea.moveWaves();
-    renderer.render(scene, camera);
-    syncCamera();
-    requestAnimationFrame(loop);
-}
+// Boat Control (w87 s83 a65 d68 space32)
+$(document).keydown(function (event) {
+    if (boat) {
+        console.log(event);
+        if (event.keyCode == 87) {
+            boat.translateX(5);
+        }
+        if (event.keyCode == 83) {
+            boat.translateX(-5);
+        }
+        if (event.keyCode == 65) {
+            boat.rotation.y -= .05;
+        }
+        if (event.keyCode == 68) {
+            boat.rotation.y += .05;
+        }
+    }
+    else {
+        boat = scene.getObjectByName('boat');
+        console.log(boat);
+    }
+});
 
+// Camera Control
 function syncCamera() {
     camera.position.set($('#posX').val(), $('#posY').val(), $('#posZ').val());
-    camera.rotation.set($('#rotX').val()/100, $('#rotY').val()/100, $('#rotZ').val()/100);
+    camera.rotation.set($('#rotX').val() / 100, $('#rotY').val() / 100, $('#rotZ').val() / 100);
     camera.updateProjectionMatrix();
 }
 
-function loadFBX(path) {
+// Model loader
+function loadFBX(path, name) {
     let loader = new THREE.FBXLoader();
     loader.load(path, function (fbx) {
         // >for animation...
@@ -236,17 +264,28 @@ function loadFBX(path) {
         //     }
         // });
 
-        // Customized setting
+        // Customized settings here
+        fbx.name = name;
         fbx.rotation.set(-Math.PI / 2, 0, 0);
+        fbx.castShadow = true;
         scene.add(fbx);
-    } );
+        // IMP: take care of the async scheme!!!
+    },
+    // called while loading is progressing
+    function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+    },
+    // called when loading has errors
+    function (error) {
+        console.log( 'An error happened' );
+    });
 }
 
-function loadGLTF(path) {
+function loadGLTF(path, name) {
     let loader = new THREE.GLTFLoader();
     loader.load(path, function (gltf) {
-        // Customized setting
         gltf.scene.rotation.set(0, Math.PI, 0);
+        gltf.scene.name = name;
         scene.add(gltf.scene);
     }, undefined, function(error){
         console.log('.gltf error:' + error);
